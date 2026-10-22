@@ -1,2 +1,10 @@
-# Agriculture-Information-System-final
-An agriculture system where user can moniter their crops virtually.
+## KrishiSetu - Agriculture Information System
+
+This app was created using https://getmocha.com.
+Need help or want to join the community? Join our [Discord](https://discord.gg/shDEGBSe2d).
+
+To run the devserver:
+```
+npm install
+npm run dev
+```

@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenPath - Agriculture Information System</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary-green: #2E7D32;
+            --light-green: #4CAF50;
+            --dark-green: #1B5E20;
+            --accent-yellow: #F9A825;
+            --text-dark: #1F2937;
+            --text-light: #6B7280;
+            --white: #ffffff;
+            --bg-overlay: rgba(0, 0, 0, 0.4); 
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'DM Sans', sans-serif;
+            --transition: all 0.3s ease;
+            --shadow-card: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-hover: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-dark);
+            background-color: #f9fbf9;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; transition: var(--transition); }
+        ul { list-style: none; }
+        button { cursor: pointer; font-family: var(--font-body); border: none; outline: none; transition: var(--transition); }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: transparent;
+            z-index: 1000;
+            transition: background 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-left-group {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logo-container {
+            position: relative;
+            z-index: 1001;
+        }
+
+        /* Large Logo */
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--white);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            display: flex; align-items: center; gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.3s;
+        }
+
+        .navbar.scrolled .logo { 
+            color: var(--primary-green); 
+            text-shadow: none; 
+        }
+
+        /* User Profile Dropdown */
+        .user-profile-container {
+            position: relative;
+            z-index: 1001;
+        }
+
+        .user-btn {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            color: var(--white);
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled .user-btn {
+            background: #f1f8f1;
+            color: var(--primary-green);
+            border-color: transparent;
+        }
+        
+        .user-btn:hover { 
+            background: rgba(255, 255, 255, 0.4); 
+            transform: translateY(-1px);
+        }
+
+        .navbar.scrolled .user-btn:hover { 
+            background: #e0f2e0; 
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 120%;
+            right: 0;
+            background: white;
+            min-width: 240px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 0.5rem 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease-in-out;
+            border: 1px solid #eee;
+        }
+
+        .user-profile-container.active .user-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-dropdown a {
+            display: block;
+            padding: 0.8rem 1.2rem;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-bottom: 1px solid #f9f9f9;
+        }
+        
+        .user-dropdown a:last-child { border-bottom: none; }
+        .user-dropdown a:hover { 
+            background-color: #f1f8f1; 
+            color: var(--primary-green); 
+            padding-left: 1.5rem; 
+        }
+
+        .mobile-menu-btn { display: none; font-size: 1.5rem; background: none; color: var(--white); }
+        .navbar.scrolled .mobile-menu-btn { color: var(--dark-green); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(var(--bg-overlay), var(--bg-overlay)), 
+                        url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1920') no-repeat center center/cover;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+            color: var(--white);
+            margin-top: 0;
+        }
+
+        .hero h1 {
+            font-family: var(--font-heading);
+            font-size: 3.5rem; max-width: 900px;
+            margin-bottom: 1.5rem; line-height: 1.1;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        }
+
+        .hero p { font-size: 1.3rem; max-width: 700px; margin-bottom: 2.5rem; color: #f0f0f0; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+
+        .cta-group { display: flex; gap: 1.2rem; flex-wrap: wrap; justify-content: center; }
+
+        .btn { padding: 1rem 2.5rem; border-radius: 50px; font-weight: 600; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-primary { background-color: var(--light-green); color: var(--white); border: none; }
+        .btn-primary:hover { background-color: var(--primary-green); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .btn-secondary { background-color: rgba(255,255,255,0.1); backdrop-filter: blur(5px); border: 2px solid var(--white); color: var(--white); }
+        .btn-secondary:hover { background-color: var(--white); color: var(--primary-green); }
+
+        /* --- STATS SECTION --- */
+        .stats-section {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;
+            padding: 4rem 5%; 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(8px); 
+            position: relative; z-index: 10;
+            margin-top: -4rem; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            border-radius: 12px;
+            max-width: 1200px; 
+            margin-left: auto; 
+            margin-right: auto;
+        }
+
+        .stat-card { text-align: center; padding: 1.5rem; border-radius: 8px; cursor: pointer; transition: var(--transition); border: 1px solid transparent; }
+        .stat-card:hover { background-color: #f1f8f1; transform: translateY(-5px); border-color: var(--light-green); }
+        .stat-number { font-family: var(--font-heading); font-size: 2.5rem; font-weight: 700; color: var(--primary-green); margin-bottom: 0.5rem; }
+        .stat-label { font-weight: 500; color: var(--text-light); text-transform: uppercase; font-size: 0.9rem; }
+
+        /* --- HOW IT WORKS --- */
+        .section { padding: 5rem 5%; max-width: 1200px; margin: 0 auto; }
+        .section-title { font-family: var(--font-heading); font-size: 2.5rem; text-align: center; color: var(--text-dark); margin-bottom: 3rem; position: relative; }
+        .section-title::after { content: ''; display: block; width: 60px; height: 3px; background: var(--primary-green); margin: 1rem auto 0; }
+
+        .steps-container { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem; }
+        .step-card {
+            flex: 1; min-width: 280px;
+            background: var(--white); padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-card);
+            text-align: center; transition: var(--transition);
+            border: 1px solid #eee; cursor: pointer;
+        }
+        .step-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-hover); border-color: var(--primary-green); }
+        .step-icon { font-size: 3rem; margin-bottom: 1rem; display: inline-block; }
+        .step-number { font-size: 1.2rem; font-weight: 700; color: var(--light-green); margin-bottom: 0.5rem; display: block; }
+        .step-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; color: var(--dark-green); }
+
+        /* --- FEATURES SECTION --- */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .feature-card { background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-card); transition: var(--transition); cursor: pointer; border: 1px solid #eee; }
+        .feature-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
+        .feature-icon-wrapper { background-color: #f1f8f1; height: 120px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; }
+        .feature-content { padding: 1.5rem; }
+        .feature-title { font-size: 1.25rem; font-weight: 700; color: var(--dark-green); margin-bottom: 0.5rem; }
+        .feature-desc { color: var(--text-light); font-size: 0.95rem; }
+
+        /* --- FOOTER --- */
+        footer { background-color: var(--dark-green); color: var(--white); padding: 4rem 5% 2rem; margin-top: 4rem; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; max-width: 1200px; margin: 0 auto 3rem; }
+        .footer-logo { font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem; display: inline-block; }
+        .footer-links h4 { margin-bottom: 1.5rem; font-size: 1.1rem; }
+        .footer-links ul li { margin-bottom: 0.8rem; }
+        .footer-links a:hover { color: var(--accent-yellow); padding-left: 5px; }
+        .copyright { text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); font-size: 0.9rem; }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2000; opacity: 0; visibility: hidden;
+            transition: var(--transition); padding: 1rem;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-box {
+            background: var(--white); padding: 2.5rem;
+            border-radius: 12px; width: 100%; max-width: 550px;
+            position: relative; transform: translateY(20px);
+            transition: var(--transition);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            max-height: 90vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+
+        .modal-close {
+            position: absolute; top: 1rem; right: 1rem;
+            font-size: 1.5rem; background: none; color: var(--text-light);
+            cursor: pointer; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center; border-radius: 50%;
+        }
+        .modal-close:hover { background-color: #f0f0f0; color: var(--text-dark); }
+
+        /* Auth Tabs */
+        .auth-tabs { display: flex; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; }
+        .auth-tab { flex: 1; padding: 1rem; background: none; font-weight: 600; color: var(--text-light); border-bottom: 2px solid transparent; margin-bottom: -2px; }
+        .auth-tab.active { color: var(--primary-green); border-bottom-color: var(--primary-green); }
+
+        /* Forms */
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.4rem; font-weight: 500; color: var(--text-dark); font-size: 0.9rem; }
+        .form-control, .form-select {
+            width: 100%; padding: 0.75rem; border: 1px solid #ddd;
+            border-radius: 6px; font-family: var(--font-body); font-size: 0.95rem;
+            box-sizing: border-box; background: white;
+        }
+        .form-control:focus, .form-select:focus { border-color: var(--primary-green); outline: none; box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1); }
+        .btn-block { width: 100%; margin-top: 1rem; }
+
+        /* List Styles for Stats */
+        .order-list { list-style: none; counter-reset: my-counter; }
+        .order-list li {
+            position: relative; padding-left: 2rem; margin-bottom: 0.8rem;
+            color: var(--text-dark); font-size: 1rem; line-height: 1.4;
+        }
+        .order-list li::before {
+            counter-increment: my-counter;
+            content: counter(my-counter) ".";
+            position: absolute; left: 0; font-weight: 700;
+            color: var(--primary-green); font-family: var(--font-heading); font-size: 1.2rem;
+        }
+
+        /* Grid for "Grow Your Farm" Options */
+        .sub-menu-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem;
+        }
+        .sub-menu-item {
+            background: #f1f8f1; padding: 1rem; border-radius: 8px;
+            text-align: center; cursor: pointer; transition: 0.2s;
+            border: 1px solid transparent; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+        }
+        .sub-menu-item:hover { background: #e0f2e0; border-color: var(--primary-green); }
+        .sub-menu-icon { font-size: 1.5rem; }
+        .sub-menu-text { font-weight: 600; font-size: 0.9rem; color: var(--dark-green); }
+
+        /* ROP Info Box */
+        .rop-info-box {
+            background-color: #e8f5e9;
+            border-left: 4px solid var(--primary-green);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--dark-green);
+        }
+
+        /* Saved Data List in Modals */
+        .saved-data-list {
+            margin-top: 1.5rem;
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+        }
+        .saved-item {
+            background: #fff;
+            border: 1px solid #eee;
+            padding: 0.8rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        .saved-item button.delete-btn {
+            color: #d32f2f;
+            background: none;
+            font-size: 0.8rem;
+            text-decoration: underline;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--dark-green); color: white;
+            padding: 1rem 2rem; border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(100px); transition: transform 0.3s ease-out;
+            z-index: 3000;
+        }
+        .toast.show { transform: translateY(0); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .mobile-menu-btn { display: block; }
+            .nav-left-group { gap: 0.8rem; }
+            .user-btn span { display: none; }
+            .modal-box { width: 95%; padding: 1.5rem; }
+            .stats-section { grid-template-columns: 1fr 1fr; }
+            .sub-menu-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-left-group">
+            <!-- Large Left Logo -->
+            <div class="logo-container">
+                <div class="logo" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                    🌾 GreenPath
+                </div>
+            </div>
+        </div>
+
+        <div class="user-profile-container" id="userContainer">
+            <button class="user-btn" id="nav-user-btn" onclick="toggleUserDropdown()">
+                👤 <span id="nav-user-text">Menu</span> <span>▼</span>
+            </button>
+            <div class="user-dropdown" id="userDropdown">
+                <!-- Links populated via JS based on login state -->
+            </div>
+        </div>
+        
+        <button class="mobile-menu-btn">☰</button>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header id="home" class="hero">
+        <h1>Empowering Farmers with Real-Time Agricultural Knowledge</h1>
+        <p>Connect with data, markets, and government schemes to grow your farm efficiently.</p>
+        <div class="cta-group">
+            <button class="btn btn-primary" onclick="openAuthOverlay('register')">Get Started</button>
+            <button class="btn btn-secondary" onclick="scrollToSection('features')">Explore Features</button>
+        </div>
+    </header>
+
+    <!-- STATS SECTION -->
+    <section class="stats-section">
+        <div class="stat-card" onclick="openStatModal('Farmers')">
+            <div class="stat-number">50,000+</div>
+            <div class="stat-label">Registered Farmers</div>
+        </div>
+        <div class="stat-card" onclick="openStatModal('Crops')">
+            <div class="stat-number">200+</div>
+            <div class="stat-label">Crop Varieties</div>
+        </div>
+        <div class="stat-card" onclick="openStatModal('Markets')">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Market Locations</div>
+        </div>
+        <div class="stat-card" onclick="openStatModal('Schemes')">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Govt Schemes</div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how-it-works" class="section">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps-container">
+            <div class="step-card" onclick="openAuthOverlay('register')">
+                <span class="step-number">01</span>
+                <div class="step-icon">👤</div>
+                <h3 class="step-title">Create Account</h3>
+                <p>Register as a Farmer or Dept Official to access dashboard.</p>
+            </div>
+            <div class="step-card" onclick="handleExploreClick()">
+                <span class="step-number">02</span>
+                <div class="step-icon">🔍</div>
+                <h3 class="step-title">Explore Features</h3>
+                <p>Check weather, market prices, and crop info specific to TN.</p>
+            </div>
+            <div class="step-card" onclick="handleGrowClick()">
+                <span class="step-number">03</span>
+                <div class="step-icon">🌱</div>
+                <h3 class="step-title">Grow Your Farm</h3>
+                <p>Save records and apply for schemes directly.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section id="features" class="section">
+        <h2 class="section-title">Everything You Need</h2>
+        <div class="features-grid">
+            <div class="feature-card" onclick="openFeatureModal('crop-info')">
+                <div class="feature-icon-wrapper">🌱</div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Crop Information</h3>
+                    <p class="feature-desc">Soil types, fertilizers, and pest control for TN crops.</p>
+                </div>
+            </div>
+            <div class="feature-card" onclick="openFeatureModal('weather')">
+                <div class="feature-icon-wrapper">🌤</div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Weather Forecast</h3>
+                    <p class="feature-desc">Real-time weather and monsoon updates.</p>
+                </div>
+            </div>
+            <div class="feature-card" onclick="openFeatureModal('market-prices')">
+                <div class="feature-icon-wrapper">💰</div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Market Prices</h3>
+                    <p class="feature-desc">Live prices from Koyambedu, Dindigul, and other Mandis.</p>
+                </div>
+            </div>
+            <div class="feature-card" onclick="openFeatureModal('farm-records')">
+                <div class="feature-icon-wrapper">📋</div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Farm Records</h3>
+                    <p class="feature-desc">Maintain digital land and production records.</p>
+                </div>
+            </div>
+            <div class="feature-card" onclick="openFeatureModal('gov-schemes')">
+                <div class="feature-icon-wrapper">🏛</div>
+                <div class="feature-content">
+                    <h3 class="feature-title">TN Govt Schemes</h3>
+                    <p class="feature-desc">Details on Kalaignar Magalir Urimai, Green House, etc.</p>
+                </div>
+            </div>
+            <div class="feature-card" onclick="openFeatureModal('reports')">
+                <div class="feature-icon-wrapper">📊</div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Reports</h3>
+                    <p class="feature-desc">View summary of all your saved data.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="#" class="footer-logo">🌾 GreenPath</a>
+                <p>Smart Farming for a Better Tomorrow.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home" onclick="scrollToSection('home')">Home</a></li>
+                    <li><a href="#features" onclick="scrollToSection('features')">Features</a></li>
+                    <li><a href="#how-it-works" onclick="scrollToSection('how-it-works')">How It Works</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Contact</h4>
+                <ul>
+                    <li>support@greenpath.in</li>
+                    <li>+91 98765 43210</li>
+                    <li>Chennai, Tamil Nadu</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2023 GreenPath Agriculture. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- AUTH MODAL -->
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('auth-modal')">&times;</button>
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Login</button>
+                <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Register</button>
+            </div>
+            
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Role Selection</label>
+                    <select class="form-select" name="role" required>
+                        <option value="" disabled selected>Select your Role...</option>
+                        <option value="Farmer">Farmer</option>
+                        <option value="Agriculture Department">Agriculture Department</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control" placeholder="Enter email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+
+            <!-- Register Form with Role Dropdown -->
+            <form id="register-form" style="display: none;" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>Role Selection</label>
+                    <select class="form-select" name="role" required>
+                        <option value="" disabled selected>Select your Role...</option>
+                        <option value="Farmer">Farmer</option>
+                        <option value="Agriculture Department">Agriculture Department</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="fullname" class="form-control" placeholder="Full Name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="Enter email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" placeholder="Create password" required>
+                </div>
+                <div class="form-group">
+                    <label>District</label>
+                    <input type="text" name="district" class="form-control" placeholder="e.g. Madurai" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FEATURE MODAL (Dynamic Content) -->
+    <div id="feature-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('feature-modal')">&times;</button>
+            <h2 id="feature-modal-title" style="margin-bottom: 0.5rem; color: var(--dark-green);"></h2>
+            <div id="feature-rop-content"></div>
+            <div id="feature-form-container"></div>
+            <div id="feature-data-display"></div>
+        </div>
+    </div>
+
+    <!-- STAT INFO MODAL -->
+    <div id="stat-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('stat-modal')">&times;</button>
+            <h2 id="stat-title" style="color: var(--primary-green); margin-bottom: 1.5rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;"></h2>
+            <div id="stat-list-container" style="margin-bottom: 1rem;"></div>
+            <p id="stat-desc" style="color: #555; font-style: italic;"></p>
+        </div>
+    </div>
+
+    <!-- GENERIC MENU MODAL -->
+    <div id="menu-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('menu-modal')">&times;</button>
+            <h2 id="menu-modal-title" style="color: var(--dark-green); text-align: center; margin-bottom: 0.5rem;"></h2>
+            <p id="menu-modal-subtitle" style="text-align: center; color: var(--text-light); font-size: 0.9rem; margin-bottom: 1.5rem;"></p>
+            <div id="menu-grid-container" class="sub-menu-grid"></div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast">Action Successful!</div>
+
+    <script>
+        /* --- 1. STATE & NAVIGATION --- */
+        let currentUser = JSON.parse(sessionStorage.getItem('currentUser')) || null;
+        const DB_PREFIX = 'greenpath_';
+
+        function toggleUserDropdown() {
+            document.getElementById('userContainer').classList.toggle('active');
+            updateUserDropdown();
+        }
+
+        function updateUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            const navText = document.getElementById('nav-user-text');
+            
+            if (currentUser) {
+                navText.textContent = `${currentUser.name} (${currentUser.role})`;
+                let links = `
+                    <a href="#home" onclick="scrollToSection('home')">Home</a>
+                    <a href="#features" onclick="scrollToSection('features')">Dashboard</a>
+                    <a href="#" onclick="logout()">Logout</a>
+                `;
+                dropdown.innerHTML = links;
+            } else {
+                navText.textContent = "Menu";
+                let links = `
+                    <a href="#home" onclick="scrollToSection('home')">Home</a>
+                    <a href="#features" onclick="scrollToSection('features')">Features</a>
+                    <a href="#contact" onclick="scrollToSection('contact')">Contact</a>
+                    <hr style="border:0; border-top:1px solid #eee; margin:0.5rem 0;">
+                    <a href="#" onclick="openAuthOverlay('login')">Login</a>
+                    <a href="#" onclick="openAuthOverlay('register')" style="color: var(--primary-green); font-weight:700;">Create Account</a>
+                `;
+                dropdown.innerHTML = links;
+            }
+        }
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const container = document.getElementById('userContainer');
+            if (container && !container.contains(event.target)) {
+                container.classList.remove('active');
+            }
+        });
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('userContainer').classList.remove('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        /* --- 2. AUTHENTICATION LOGIC --- */
+        function openAuthOverlay(tab = 'login') {
+            switchAuthTab(tab);
+            document.getElementById('auth-modal').classList.add('active');
+        }
+
+        function switchAuthTab(tab) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            } else {
+                tabs[1].classList.add('active');
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const role = formData.get('role');
+            const name = formData.get('fullname');
+            
+            // Simulate backend storage
+            currentUser = {
+                name: name,
+                email: formData.get('email'),
+                role: role,
+                district: formData.get('district')
+            };
+            
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            showToast(`Welcome! Registered as ${role}`);
+            closeModal('auth-modal');
+            updateUserDropdown();
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            // Simulated login: accepts any email, sets a default user
+            currentUser = {
+                name: "Demo User",
+                email: e.target.querySelector('input[type="email"]').value,
+                role: "Farmer", // Default for demo login
+                district: "Chennai"
+            };
+            
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showToast('Login Successful!');
+            closeModal('auth-modal');
+            updateUserDropdown();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            currentUser = null;
+            showToast('Logged out successfully');
+            updateUserDropdown();
+            scrollToSection('home');
+        }
+
+        /* --- 3. STATS OVERVIEW LOGIC --- */
+        const statDetails = {
+            'Farmers': {
+                title: 'Farmers Overview',
+                list: ['Cauvery Delta farmers', 'Western Ghats farmers', 'Knowledge sharing community', '50,000+ Registered users across TN'],
+                desc: "Our platform connects farmers across Tamil Nadu."
+            },
+            'Crops': {
+                title: 'Crops Overview',
+                list: ['Paddy', 'Turmeric', 'Sugarcane', 'Banana', 'Groundnut', 'Horticultural crops'],
+                desc: "We support comprehensive data for major crops native to TN."
+            },
+            'Markets': {
+                title: 'Markets Overview',
+                list: ['Koyambedu (Chennai)', 'Dindigul', 'Madurai', 'Trichy'],
+                desc: "Real-time prices are aggregated directly from major Regulated Markets."
+            },
+            'Schemes': {
+                title: 'Schemes Overview',
+                list: ['TN Green House Scheme', 'Kuruvai Special Package', 'PM-KISAN (₹6000/yr)', 'Organic Farming Scheme'],
+                desc: "We currently track and assist in applying for key government schemes."
+            }
+        };
+
+        function openStatModal(type) {
+            const data = statDetails[type];
+            if(!data) return;
+            document.getElementById('stat-title').textContent = data.title;
+            
+            let listHtml = '<ul class="order-list">';
+            data.list.forEach(item => { listHtml += `<li>${item}</li>`; });
+            listHtml += '</ul>';
+            
+            document.getElementById('stat-list-container').innerHTML = listHtml;
+            document.getElementById('stat-desc').textContent = data.desc;
+            document.getElementById('stat-modal').classList.add('active');
+        }
+
+        /* --- 4. EXPLORE & GROW YOUR FARM MENU --- */
+        const exploreMenuItems = [
+            { label: 'Weather Forecast', icon: '🌤️', action: () => openFeatureModal('weather') },
+            { label: 'Market Prices', icon: '💰', action: () => openFeatureModal('market-prices') },
+            { label: 'Crop Information', icon: '🌾', action: () => openFeatureModal('crop-info') },
+            { label: 'TN Govt Schemes', icon: '🏛️', action: () => openFeatureModal('gov-schemes') },
+        ];
+
+        const growMenuItems = [
+            { label: 'Crop Diary', icon: '📒', action: () => openFeatureModal('farm-records') },
+            { label: 'Apply for Schemes', icon: '📑', action: () => openFeatureModal('gov-schemes') },
+            { label: 'Document Vault', icon: '📂', action: () => showToast('Secure Vault Opening...') },
+            { label: 'Expense & Profit', icon: '💰', action: () => showToast('Calculator Loading...') },
+        ];
+
+        function openMenuModal(title, subtitle, items) {
+            const container = document.getElementById('menu-grid-container');
+            container.innerHTML = '';
+            
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'sub-menu-item';
+                div.innerHTML = `<span class="sub-menu-icon">${item.icon}</span><span class="sub-menu-text">${item.label}</span>`;
+                div.onclick = () => {
+                    closeModal('menu-modal');
+                    item.action();
+                };
+                container.appendChild(div);
+            });
+
+            document.getElementById('menu-modal-title').textContent = title;
+            document.getElementById('menu-modal-subtitle').textContent = subtitle;
+            document.getElementById('menu-modal').classList.add('active');
+        }
+
+        function handleExploreClick() {
+            openMenuModal('Explore Features', 'Quick Access to TN Specific Data', exploreMenuItems);
+        }
+        function handleGrowClick() {
+            openMenuModal('Grow Your Farm', 'Manage your farm efficiently', growMenuItems);
+        }
+
+        /* --- 5. FEATURE MODAL & DATA LOGIC --- */
+        const featuresConfig = {
+            'crop-info': {
+                title: 'Crop Information',
+                ropInfo: "🌱 Expert Advice: In Tamil Nadu, Paddy (Rice) thrives in Clay Loam soil. Use Green Manure (Daincha) before planting.",
+                fields: [
+                    { name: 'cropName', label: 'Crop Name', type: 'select', options: ['Paddy', 'Turmeric', 'Sugarcane', 'Banana', 'Groundnut'] },
+                    { name: 'soilType', label: 'Soil Type', type: 'select', options: ['Red Soil', 'Clay Loam', 'Black Soil', 'Sandy Soil'] },
+                    { name: 'fertilizer', label: 'Fertilizer', type: 'select', options: ['Urea', 'DAP', 'Organic Manure'] }
+                ]
+            },
+            'weather': {
+                title: 'Weather Forecast',
+                ropInfo: "🌤️ Advisory: Check NE Monsoon updates for coastal districts.",
+                fields: [
+                    { name: 'location', label: 'Location', type: 'select', options: ['Chennai', 'Madurai', 'Trichy', 'Coimbatore'] },
+                    { name: 'forecastType', label: 'Forecast Type', type: 'select', options: ['NE Monsoon Updates', 'Rainfall Prediction', 'Temperature'] }
+                ]
+            },
+            'market-prices': {
+                title: 'Market Prices',
+                ropInfo: "💰 Trend: Tomato prices fluctuate weekly in Koyambedu.",
+                fields: [
+                    { name: 'commodity', label: 'Commodity', type: 'select', options: ['Paddy (Raw)', 'Tomato', 'Onion', 'Coconut'] },
+                    { name: 'marketName', label: 'Market Name', type: 'select', options: ['Koyambedu', 'Madurai', 'Trichy'] },
+                    { name: 'price', label: 'Price per Quintal (₹)', type: 'number', placeholder: 'e.g. 3200' }
+                ]
+            },
+            'farm-records': {
+                title: 'Farm Records',
+                ropInfo: "📋 Keeping digital records helps in getting bank loans faster.",
+                fields: [
+                    { name: 'farmName', label: 'Farm Name/ID', type: 'text', placeholder: 'My Farm 1' },
+                    { name: 'landSize', label: 'Land Size (Acres)', type: 'number', placeholder: '5' }
+                ]
+            },
+            'gov-schemes': {
+                title: 'TN Govt Schemes',
+                ropInfo: "🏛 Top Schemes: 1. TN Green House. 2. Kuruvai Special Package.",
+                fields: [
+                    { name: 'schemeName', label: 'Scheme Name', type: 'select', options: ['TN Green House Scheme', 'Kuruvai Special Package', 'PM-KISAN'] },
+                    { name: 'status', label: 'Status', type: 'select', options: ['Applied', 'Approved', 'Pending'] }
+                ]
+            },
+            'reports': { isReport: true }
+        };
+
+        function openFeatureModal(type, defaults = null) {
+            const modal = document.getElementById('feature-modal');
+            const titleEl = document.getElementById('feature-modal-title');
+            const formContainer = document.getElementById('feature-form-container');
+            const dataDisplay = document.getElementById('feature-data-display');
+            const ropContent = document.getElementById('feature-rop-content');
+
+            titleEl.textContent = featuresConfig[type].title || 'Reports';
+            formContainer.innerHTML = ''; 
+            dataDisplay.innerHTML = ''; 
+            ropContent.innerHTML = '';
+
+            if (type === 'reports') {
+                generateReportsUI(dataDisplay);
+                modal.classList.add('active');
+                return;
+            }
+
+            // 1. Render ROP Info
+            if (featuresConfig[type].ropInfo) {
+                const box = document.createElement('div');
+                box.className = 'rop-info-box';
+                box.innerHTML = featuresConfig[type].ropInfo;
+                ropContent.appendChild(box);
+            }
+
+            // 2. Render Form
+            const form = document.createElement('form');
+            form.onsubmit = (e) => saveData(e, type);
+
+            featuresConfig[type].fields.forEach(field => {
+                const group = document.createElement('div');
+                group.className = 'form-group';
+                
+                const defaultValue = defaults && defaults[field.name] ? defaults[field.name] : '';
+
+                if(field.type === 'select') {
+                    let optionsHtml = field.options.map(opt => 
+                        `<option value="${opt}" ${defaultValue === opt ? 'selected' : ''}>${opt}</option>`
+                    ).join('');
+                    group.innerHTML = `
+                        <label>${field.label}</label>
+                        <select name="${field.name}" class="form-select" required>
+                            <option value="" disabled selected>Select ${field.label}...</option>
+                            ${optionsHtml}
+                        </select>
+                    `;
+                } else {
+                    group.innerHTML = `
+                        <label>${field.label}</label>
+                        <input type="${field.type}" name="${field.name}" class="form-control" 
+                            placeholder="${field.placeholder}" value="${defaultValue}" required>
+                    `;
+                }
+                form.appendChild(group);
+            });
+
+            const btn = document.createElement('button');
+            btn.type = 'submit';
+            btn.className = 'btn btn-primary btn-block';
+            btn.textContent = 'Save Record';
+            form.appendChild(btn);
+
+            formContainer.appendChild(form);
+            
+            // 3. Render Saved Data
+            renderSavedData(type, dataDisplay);
+            modal.classList.add('active');
+        }
+
+        function saveData(e, type) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
+            data.id = Date.now(); 
+
+            const existing = JSON.parse(localStorage.getItem(DB_PREFIX + type) || '[]');
+            existing.push(data);
+
+            localStorage.setItem(DB_PREFIX + type, JSON.stringify(existing));
+
+            showToast('Record Saved Successfully!');
+            e.target.reset();
+            renderSavedData(type, document.getElementById('feature-data-display'));
+        }
+
+        function renderSavedData(type, container) {
+            const data = JSON.parse(localStorage.getItem(DB_PREFIX + type) || '[]');
+            
+            if (data.length === 0) {
+                container.innerHTML = '<div style="padding:1rem; text-align:center; color:#999;">No saved records yet.</div>';
+                return;
+            }
+
+            const list = document.createElement('div');
+            list.className = 'saved-data-list';
+            list.innerHTML = '<h4 style="margin-bottom:0.5rem; font-size:0.9rem; color:#666;">Saved History:</h4>';
+
+            data.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'saved-item';
+                
+                let text = Object.entries(item)
+                    .filter(([k]) => k !== 'id')
+                    .map(([k, v]) => `<span><b>${k}:</b> ${v}</span>`)
+                    .join(' | ');
+                
+                div.innerHTML = `
+                    <div>${text}</div>
+                    <button onclick="deleteItem('${type}', ${index})" class="delete-btn">Delete</button>
+                `;
+                list.appendChild(div);
+            });
+
+            container.appendChild(list);
+        }
+
+        function deleteItem(type, index) {
+            const data = JSON.parse(localStorage.getItem(DB_PREFIX + type) || '[]');
+            data.splice(index, 1);
+            localStorage.setItem(DB_PREFIX + type, JSON.stringify(data));
+            renderSavedData(type, document.getElementById('feature-data-display'));
+            showToast('Record Deleted');
+        }
+
+        function generateReportsUI(container) {
+            const types = ['crop-info', 'weather', 'market-prices', 'farm-records', 'gov-schemes'];
+            const titles = {
+                'crop-info': 'Crop Records',
+                'weather': 'Forecasts Saved',
+                'market-prices': 'Price Records',
+                'farm-records': 'Farm Profiles',
+                'gov-schemes': 'Scheme Applications'
+            };
+
+            let html = '<div style="display:grid; grid-template-columns:repeat(2,1fr); gap:1rem;">';
+            
+            types.forEach(type => {
+                const count = JSON.parse(localStorage.getItem(DB_PREFIX + type) || '[]').length;
+                html += `
+                    <div style="background:#f1f8f1; padding:1.5rem; border-radius:8px; text-align:center; border:1px solid #ddd;">
+                        <div style="font-size:0.8rem; text-transform:uppercase; color:#666;">${titles[type]}</div>
+                        <div style="font-size:2rem; font-weight:700; color:var(--dark-green); font-family:var(--font-heading);">${count}</div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Seed Default Data
+        window.addEventListener('DOMContentLoaded', () => {
+            updateUserDropdown(); // Initialize navbar state
+            
+            const defaults = {
+                'greenpath_crop-info': [{cropName: 'Paddy', soilType: 'Clay Loam', fertilizer: 'Urea', id: 101}],
+                'greenpath_market-prices': [{commodity: 'Tomato', marketName: 'Koyambedu', price: '12000', id: 301}],
+                'greenpath_gov-schemes': [{schemeName: 'TN Green House Scheme', status: 'Applied', id: 501}]
+            };
+            for (const [key, value] of Object.entries(defaults)) {
+                if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify(value));
+            }
+        });
+
+    </script>
+</body>
+</html>
